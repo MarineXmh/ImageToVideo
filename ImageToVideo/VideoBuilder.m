@@ -244,7 +244,15 @@
 
 
 - (CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image {
-    
+    CGFloat w = CGImageGetWidth(image);
+    CGFloat h = CGImageGetHeight(image);
+    if (w >= h) {
+        
+    } else {
+        CGFloat t = w;
+        w = h;
+        h = t;
+    }
     if (image) {
         NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
                                  [NSNumber numberWithBool:YES],kCVPixelBufferCGImageCompatibilityKey,
@@ -252,7 +260,7 @@
         
         CVPixelBufferRef pxbuffer = NULL;
         
-        CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, CGImageGetWidth(image), CGImageGetHeight(image), kCVPixelFormatType_32ARGB,(__bridge CFDictionaryRef)options, &pxbuffer);
+        CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, w, h, kCVPixelFormatType_32ARGB,(__bridge CFDictionaryRef)options, &pxbuffer);
         
         NSParameterAssert(status == kCVReturnSuccess && pxbuffer != NULL);
 
@@ -262,12 +270,12 @@
         
         CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
         
-        CGContextRef context = CGBitmapContextCreate(pxdata, CGImageGetWidth(image), CGImageGetHeight(image), 8, 4*CGImageGetWidth(image), rgbColorSpace, kCGImageAlphaNoneSkipFirst);
+        CGContextRef context = CGBitmapContextCreate(pxdata, w, h, 8, 4*w, rgbColorSpace, kCGImageAlphaNoneSkipFirst);
 
         NSParameterAssert(context);
 
         CGContextConcatCTM(context, CGAffineTransformMakeRotation(0));
-        CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
+        CGContextDrawImage(context, CGRectMake(0, 0, w, h), image);
         
         CGColorSpaceRelease(rgbColorSpace);
         CGContextRelease(context);

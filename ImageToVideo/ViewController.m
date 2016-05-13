@@ -24,7 +24,8 @@
     NSString *fileName = @"output.mov";
     self.videoPath = [NSString stringWithFormat:@"%@/%@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0], fileName];
     [[NSFileManager defaultManager] removeItemAtPath:self.videoPath error:nil];
-    self.videoBuilder = [[VideoBuilder alloc] initWithOutputSize:CGSizeMake(1920, 1080) Timescale:1 OutputPath:self.videoPath];
+    UIImage *image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"img" ofType:@"png"]];
+    self.videoBuilder = [[VideoBuilder alloc] initWithOutputSize:CGSizeMake(image.size.width, image.size.height) Timescale:1 OutputPath:self.videoPath];
     self.audioPath = [[NSBundle mainBundle] pathForResource:@"audio" ofType:@"mp3"];
 }
 
